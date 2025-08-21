@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/senac-tech-collector/static/css/main.b46aacb9.css",
+    "main.js": "/senac-tech-collector/static/js/main.3fb33578.js",
+    "static/js/453.670e15c7.chunk.js": "/senac-tech-collector/static/js/453.670e15c7.chunk.js",
+    "index.html": "/senac-tech-collector/index.html",
+    "main.b46aacb9.css.map": "/senac-tech-collector/static/css/main.b46aacb9.css.map",
+    "main.3fb33578.js.map": "/senac-tech-collector/static/js/main.3fb33578.js.map",
+    "453.670e15c7.chunk.js.map": "/senac-tech-collector/static/js/453.670e15c7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b46aacb9.css",
+    "static/js/main.3fb33578.js"
+  ]
+}
