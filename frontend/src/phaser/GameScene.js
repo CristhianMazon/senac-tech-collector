@@ -136,7 +136,7 @@ export default class GameScene extends Phaser.Scene {
       loop: true
     });
 
-    this.gameTimer = this.time.add.event({
+    this.gameTimer = this.time.addEvent({ // Correção: remova o '.event'
       delay: 1000,
       callback: () => {
         this.tempoRestante--;
