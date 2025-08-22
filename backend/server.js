@@ -21,7 +21,7 @@ app.post('/api/jogador', async (req, res) => {
   const { nome, email, telefone } = req.body;
   try {
     const query = `
-      INSERT INTO "senac_jogo_db_user"."jogadores" (nome, email, telefone)
+      INSERT INTO public.jogadores (nome, email, telefone)
       VALUES ($1, $2, $3)
       ON CONFLICT (email) DO NOTHING;
     `;
@@ -37,7 +37,7 @@ app.post('/api/jogador', async (req, res) => {
 app.post('/api/partidas', async (req, res) => {
   const { email, score, stats } = req.body;
   try {
-    const query = 'INSERT INTO "senac_jogo_db_user"."partidas" (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
+    const query = 'INSERT INTO public.partidas (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
     await pool.query(query, [email, score, stats]);
     res.status(201).json({ message: 'Partida salva com sucesso!' });
   } catch (error) {
@@ -52,11 +52,11 @@ app.get('/api/dashboard/:email', async (req, res) => {
   try {
     const query = `
       SELECT
-        (SELECT nome FROM "senac_jogo_db_user"."jogadores" WHERE email = $1) as nome_jogador,
-        (SELECT COUNT(*) FROM "senac_jogo_db_user"."partidas" WHERE jogador_email = $1) as total_partidas,
-        (SELECT MAX(pontuacao) FROM "senac_jogo_db_user"."partidas" WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
-        (SELECT pontuacao FROM "senac_jogo_db_user"."partidas" WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
-        (SELECT jsonb_object_agg(key, value) FROM (SELECT key, SUM((stats_coletados->>key)::int) AS value FROM "senac_jogo_db_user"."partidas", jsonb_each_text(stats_coletados) WHERE jogador_email = $1 GROUP BY key) AS stats) as stats_totais
+        (SELECT nome FROM public.jogadores WHERE email = $1) as nome_jogador,
+        (SELECT COUNT(*) FROM public.partidas WHERE jogador_email = $1) as total_partidas,
+        (SELECT MAX(pontuacao) FROM public.partidas WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
+        (SELECT pontuacao FROM public.partidas WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
+        (SELECT jsonb_object_agg(key, value) FROM (SELECT key, SUM((stats_coletados->>key)::int) AS value FROM public.partidas, jsonb_each_text(stats_coletados) WHERE jogador_email = $1 GROUP BY key) AS stats) as stats_totais
     `;
     const result = await pool.query(query, [email]);
     res.json(result.rows[0]);
@@ -71,8 +71,8 @@ app.get('/api/leaderboard/top', async (req, res) => {
   try {
     const query = `
       SELECT p.pontuacao, j.nome
-      FROM "senac_jogo_db_user"."partidas" p
-      JOIN "senac_jogo_db_user"."jogadores" j ON p.jogador_email = j.email
+      FROM public.partidas p
+      JOIN public.jogadores j ON p.jogador_email = j.email
       ORDER BY p.pontuacao DESC
       LIMIT 1;
     `;
