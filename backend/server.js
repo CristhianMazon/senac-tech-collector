@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3001; // Render usa a variável de ambiente PORT
+const port = process.env.PORT || 3001;
 
 // Configuração para conectar ao banco de dados no Render, usando variáveis de ambiente
 const pool = new Pool({
@@ -21,7 +21,7 @@ app.post('/api/jogador', async (req, res) => {
   const { nome, email, telefone } = req.body;
   try {
     const query = `
-      INSERT INTO jogadores (nome, email, telefone)
+      INSERT INTO senac_jogo_db_user.jogadores (nome, email, telefone)
       VALUES ($1, $2, $3)
       ON CONFLICT (email) DO NOTHING;
     `;
@@ -29,8 +29,6 @@ app.post('/api/jogador', async (req, res) => {
     res.status(201).json({ message: 'Jogador cadastrado ou já existente.' });
   } catch (error) {
     console.error('Erro ao salvar jogador:', error);
-    // Adicionando um log mais detalhado para o erro do banco de dados
-    console.error('Detalhes do erro do banco de dados:', error.message);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
@@ -39,7 +37,7 @@ app.post('/api/jogador', async (req, res) => {
 app.post('/api/partidas', async (req, res) => {
   const { email, score, stats } = req.body;
   try {
-    const query = 'INSERT INTO partidas (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
+    const query = 'INSERT INTO senac_jogo_db_user.partidas (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
     await pool.query(query, [email, score, stats]);
     res.status(201).json({ message: 'Partida salva com sucesso!' });
   } catch (error) {
@@ -54,11 +52,11 @@ app.get('/api/dashboard/:email', async (req, res) => {
   try {
     const query = `
       SELECT
-        (SELECT nome FROM jogadores WHERE email = $1) as nome_jogador,
-        (SELECT COUNT(*) FROM partidas WHERE jogador_email = $1) as total_partidas,
-        (SELECT MAX(pontuacao) FROM partidas WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
-        (SELECT pontuacao FROM partidas WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
-        (SELECT jsonb_object_agg(key, value) FROM (SELECT key, SUM((stats_coletados->>key)::int) AS value FROM partidas, jsonb_each_text(stats_coletados) WHERE jogador_email = $1 GROUP BY key) AS stats) as stats_totais
+        (SELECT nome FROM senac_jogo_db_user.jogadores WHERE email = $1) as nome_jogador,
+        (SELECT COUNT(*) FROM senac_jogo_db_user.partidas WHERE jogador_email = $1) as total_partidas,
+        (SELECT MAX(pontuacao) FROM senac_jogo_db_user.partidas WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
+        (SELECT pontuacao FROM senac_jogo_db_user.partidas WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
+        (SELECT jsonb_object_agg(key, value) FROM (SELECT key, SUM((stats_coletados->>key)::int) AS value FROM senac_jogo_db_user.partidas, jsonb_each_text(stats_coletados) WHERE jogador_email = $1 GROUP BY key) AS stats) as stats_totais
     `;
     const result = await pool.query(query, [email]);
     res.json(result.rows[0]);
@@ -73,8 +71,8 @@ app.get('/api/leaderboard/top', async (req, res) => {
   try {
     const query = `
       SELECT p.pontuacao, j.nome
-      FROM partidas p
-      JOIN jogadores j ON p.jogador_email = j.email
+      FROM senac_jogo_db_user.partidas p
+      JOIN senac_jogo_db_user.jogadores j ON p.jogador_email = j.email
       ORDER BY p.pontuacao DESC
       LIMIT 1;
     `;
