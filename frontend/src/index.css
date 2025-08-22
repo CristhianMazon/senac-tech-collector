@@ -159,4 +159,4 @@ body, html, #root {
 /* Posições dos elementos da UI */
 #info-usuario { top: 15px; right: 15px; }
 #score-display { top: 15px; left: 15px; }
-#timer-display { top: 100px; left: 15px; }
+#timer-display { top: 80px; left: 15px; }
