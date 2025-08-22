@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
 
-// ==================================================================
-// URL do backend online
-// ==================================================================
-const API_URL = 'https://senac-tech-collector-backend.onrender.com';
+// URL do backend local
+const API_URL = 'http://localhost:3001';
 
 function Dashboard({ player, onPlay, onLogout }) {
   const [dashboardData, setDashboardData] = useState(null);
@@ -35,11 +33,8 @@ function Dashboard({ player, onPlay, onLogout }) {
     async function fetchData() {
       try {
         setLoading(true);
-        // MUDANÇA AQUI
         const dashPromise = axios.get(`${API_URL}/api/dashboard/${player.email}`);
-        // MUDANÇA AQUI
         const leadPromise = axios.get(`${API_URL}/api/leaderboard/top`);
-        
         const [dashResponse, leadResponse] = await Promise.all([dashPromise, leadPromise]);
         setDashboardData(dashResponse.data);
         setLeaderboard(leadResponse.data);

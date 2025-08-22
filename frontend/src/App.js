@@ -1,95 +1,149 @@
-import React, { useState, useEffect } from 'react';
-import api from './api'; // Importa a instância do axios
+import React, { useState, useEffect, useCallback } from 'react';
+import Phaser from 'phaser';
+import axios from 'axios';
+
 import Dashboard from './components/Dashboard';
+import ScorePopup from './components/ScorePopup';
+import ComoJogarPopup from './components/ComoJogarPopup';
 import Cadastro from './components/Cadastro';
-import './App.css';
+import JogoUI from './components/JogoUI';
+import GameScene from './phaser/GameScene';
+
+// URL do backend local
+const API_URL = 'http://localhost:3001';
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [showCadastro, setShowCadastro] = useState(false);
-  const [scores, setScores] = useState([]);
+  const [gameState, setGameState] = useState('cadastro');
+  const [showComoJogar, setShowComoJogar] = useState(false);
+  const [playerData, setPlayerData] = useState(null);
+  const [uiData, setUiData] = useState({ score: 0, time: 60 });
+  const [lastGameResult, setLastGameResult] = useState(null);
+  
+  const gameInstanceRef = React.useRef(null);
 
   useEffect(() => {
-    fetchScores();
+    const savedPlayer = localStorage.getItem('playerData');
+    if (savedPlayer) {
+      setPlayerData(JSON.parse(savedPlayer));
+      setGameState('dashboard');
+    }
   }, []);
 
-  const fetchScores = async () => {
+  const handleCadastro = useCallback(async (data) => {
     try {
-      // Usa a instância 'api' e a rota correta '/api/scores'
-      const response = await api.get('/api/scores');
-      setScores(response.data);
-    } catch (err)
-    {
-      console.error('Erro ao buscar scores:', err);
+      await axios.post(`${API_URL}/api/jogador`, data);
+      localStorage.setItem('playerData', JSON.stringify(data));
+      setPlayerData(data);
+      setGameState('dashboard');
+    } catch (error) {
+      console.error("Erro ao cadastrar:", error);
+      alert("Não foi possível conectar ao servidor.");
     }
-  };
+  }, []);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem('playerData');
+    setPlayerData(null);
+    setGameState('cadastro');
+  }, []);
+
+  const handleShowComoJogar = useCallback(() => {
+    setShowComoJogar(true);
+  }, []);
+
+  const handleStartGame = useCallback(() => {
+    setShowComoJogar(false);
+    setUiData({ score: 0, time: 60 });
+    setGameState('jogando');
+  }, []);
+  
+  const handleGameOver = useCallback(async (score, stats) => {
     try {
-      // Usa a instância 'api' e a rota correta '/api/login'
-      const response = await api.post('/api/login', { username, password });
-      setUser(response.data.user);
-      setError('');
-    } catch (err) {
-      console.error('Erro no login:', err);
-      setError('Usuário ou senha inválidos.');
+        await axios.post(`${API_URL}/api/partidas`, {
+            email: playerData.email,
+            score,
+            stats
+        });
+        setLastGameResult({ score });
+        setGameState('popup');
+    } catch (error) {
+        console.error("Erro ao salvar partida:", error);
+        setGameState('dashboard');
     }
-  };
+  }, [playerData]);
 
-  const handleFimDeJogo = async (score) => {
-    if (user) {
-      try {
-        // Usa a instância 'api' e a rota correta '/api/scores'
-        await api.post('/api/scores', { userId: user.id, score });
-        fetchScores(); // Atualiza a lista de scores
-      } catch (err) {
-        console.error('Erro ao salvar pontuação:', err);
+  const handleClosePopup = useCallback(() => {
+    setLastGameResult(null);
+    setGameState('dashboard');
+  }, []);
+
+  useEffect(() => {
+    if (gameState === 'jogando' && !gameInstanceRef.current) {
+      const config = {
+        type: Phaser.AUTO,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        parent: 'jogo-container',
+        backgroundColor: '#003B6F',
+        physics: {
+          default: 'arcade',
+          arcade: {
+            gravity: { y: 100 },
+          },
+        },
+        scene: [GameScene]
+      };
+      const game = new Phaser.Game(config);
+      game.events.on('updateUI', (data) => {
+          setUiData(prev => ({ ...prev, ...data }));
+      });
+      game.scene.start('GameScene', { onGameOver: handleGameOver });
+      gameInstanceRef.current = game;
+    }
+    
+    if (gameState !== 'jogando' && gameInstanceRef.current) {
+      gameInstanceRef.current.destroy(true);
+      gameInstanceRef.current = null;
+    }
+
+    return () => {
+      if (gameInstanceRef.current) {
+        gameInstanceRef.current.destroy(true);
+        gameInstanceRef.current = null;
       }
-    }
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setUsername('');
-    setPassword('');
-  };
-
-  if (user) {
-    return <Dashboard user={user} onLogout={handleLogout} onGameEnd={handleFimDeJogo} scores={scores} />;
-  }
-
-  if (showCadastro) {
-    return <Cadastro onCadastroSuccess={() => setShowCadastro(false)} />;
-  }
+    };
+  }, [gameState, handleGameOver]);
 
   return (
     <div className="App">
-      <div className="auth-container">
-        <h1>Senac Tech Collector</h1>
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            placeholder="Usuário"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        {error && <p className="error">{error}</p>}
-        <button className="link-button" onClick={() => setShowCadastro(true)}>Não tem uma conta? Cadastre-se</button>
-      </div>
+      {gameState === 'jogando' && (
+        <>
+          <div id="jogo-container" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }} />
+          {playerData && (
+            <JogoUI 
+              score={uiData.score} 
+              time={uiData.time} 
+              playerName={playerData.nome.split(' ')[0]} 
+            />
+          )}
+        </>
+      )}
+
+      {gameState === 'cadastro' && <Cadastro onCadastrar={handleCadastro} />}
+      
+      {playerData && gameState === 'dashboard' && (
+        <Dashboard 
+          player={playerData} 
+          onPlay={handleShowComoJogar} 
+          onLogout={handleLogout}
+        />
+      )}
+      
+      {gameState === 'popup' && lastGameResult && (
+        <ScorePopup score={lastGameResult.score} onClose={handleClosePopup} />
+      )}
+
+      {showComoJogar && <ComoJogarPopup onStartGame={handleStartGame} />}
     </div>
   );
 }
