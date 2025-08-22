@@ -27,7 +27,7 @@ function criarItem(scene, itemsGroup, bonusGroup, badItemGroup, itemTypes, pontu
   const item = group.create(x, -50, itemKey);
 
   // ==================================================================
-  // MUDANÇA PRINCIPAL AQUI: Tamanhos diferentes para cada item
+  // Tamanhos diferentes para cada item
   // ==================================================================
   // Revertido para os valores fixos originais
   if (itemKey === 'senac') {
