@@ -2,44 +2,33 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './Dashboard.css';
 
-// URL do backend local
-const API_URL = 'http://localhost:3001';
+// Usar a variável de ambiente para a URL da API
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function Dashboard({ player, onPlay, onLogout }) {
   const [dashboardData, setDashboardData] = useState(null);
   const [leaderboard, setLeaderboard] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const handleResize = () => {
-      const dashboard = document.querySelector('.dashboard-container');
-      if (dashboard) {
-        const baseWidth = 1920;
-        const baseHeight = 1080;
-        const screenWidth = window.innerWidth;
-        const screenHeight = window.innerHeight;
-        const scaleX = screenWidth / baseWidth;
-        const scaleY = screenHeight / baseHeight;
-        const scale = Math.min(scaleX, scaleY);
-        dashboard.style.transform = `scale(${scale})`;
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    handleResize();
-    return () => window.removeEventListener('resize', handleResize);
-  }, [loading]);
+  // Removendo o useEffect de redimensionamento
+  // O CSS flexível já lida com a responsividade.
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        console.log("Dashboard.js: Buscando dados para o email:", player.email); // Log para debug
         const dashPromise = axios.get(`${API_URL}/api/dashboard/${player.email}`);
         const leadPromise = axios.get(`${API_URL}/api/leaderboard/top`);
         const [dashResponse, leadResponse] = await Promise.all([dashPromise, leadPromise]);
+        
+        console.log("Dashboard.js: Dados do dashboard recebidos:", dashResponse.data); // Log para debug
+        console.log("Dashboard.js: Dados do leaderboard recebidos:", leadResponse.data); // Log para debug
+        
         setDashboardData(dashResponse.data);
         setLeaderboard(leadResponse.data);
       } catch (error) {
-        console.error("Erro ao buscar dados:", error);
+        console.error("Dashboard.js: Erro ao buscar dados:", error);
       } finally {
         setLoading(false);
       }
@@ -56,7 +45,7 @@ function Dashboard({ player, onPlay, onLogout }) {
   }
 
   if (!dashboardData || !leaderboard) {
-     return (
+      return (
         <header className="dashboard-header">
             <div className="player-name">ERRO</div>
             <button className="logout-button" onClick={onLogout}>Sair</button>
