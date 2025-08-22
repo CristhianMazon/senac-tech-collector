@@ -16,8 +16,6 @@ const pool = new Pool({
 app.use(cors());
 app.use(express.json());
 
-// ... (O restante do seu código das rotas POST e GET permanece o mesmo) ...
-
 // ROTA 1: Cadastro/Login do jogador
 app.post('/api/jogador', async (req, res) => {
   const { nome, email, telefone } = req.body;
@@ -31,6 +29,8 @@ app.post('/api/jogador', async (req, res) => {
     res.status(201).json({ message: 'Jogador cadastrado ou já existente.' });
   } catch (error) {
     console.error('Erro ao salvar jogador:', error);
+    // Adicionando um log mais detalhado para o erro do banco de dados
+    console.error('Detalhes do erro do banco de dados:', error.message);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
