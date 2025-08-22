@@ -104,7 +104,10 @@ export default class GameScene extends Phaser.Scene {
     const background = this.add.image(0, 0, 'fundoJogo').setOrigin(0);
     background.displayWidth = width;
     background.displayHeight = height;
-    background.setDepth(-1); // Isso garante que o fundo fique atrás de todos os outros elementos do jogo.
+    
+    // CORREÇÃO: Mover o fundo para trás e garantir que ele não capture eventos de entrada
+    background.setDepth(-1);
+    background.disableInteractive();
 
     this.pontuacao = 0;
     this.tempoRestante = 60;
