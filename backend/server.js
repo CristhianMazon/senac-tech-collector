@@ -3,19 +3,20 @@ const { Pool } = require('pg');
 const cors = require('cors');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001; // Render usa a variável de ambiente PORT
 
-// Configuração para conectar ao seu banco de dados LOCAL
+// Configuração para conectar ao banco de dados no Render, usando variáveis de ambiente
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'senac_jogo',
-  password: 'Liloka*8', 
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 app.use(cors());
 app.use(express.json());
+
+// ... (O restante do seu código das rotas POST e GET permanece o mesmo) ...
 
 // ROTA 1: Cadastro/Login do jogador
 app.post('/api/jogador', async (req, res) => {
@@ -61,7 +62,7 @@ app.get('/api/dashboard/:email', async (req, res) => {
     `;
     const result = await pool.query(query, [email]);
     res.json(result.rows[0]);
-  } catch (error) { // <-- A CHAVE { QUE FALTAVA FOI ADICIONADA AQUI
+  } catch (error) {
     console.error('Erro ao buscar dados do dashboard:', error);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
@@ -86,5 +87,5 @@ app.get('/api/leaderboard/top', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Backend rodando em http://localhost:${port}`);
+  console.log(`Backend rodando na porta ${port}`);
 });

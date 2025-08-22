@@ -9,8 +9,8 @@ import Cadastro from './components/Cadastro';
 import JogoUI from './components/JogoUI';
 import GameScene from './phaser/GameScene';
 
-// URL do backend local
-const API_URL = 'http://localhost:3001';
+// Use a variável de ambiente para a URL da API, com um fallback para desenvolvimento local
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function App() {
   const [gameState, setGameState] = useState('cadastro');
@@ -37,7 +37,9 @@ function App() {
       setGameState('dashboard');
     } catch (error) {
       console.error("Erro ao cadastrar:", error);
-      alert("Não foi possível conectar ao servidor.");
+      // Alterado para usar um alerta customizado em vez de alert()
+      // alert("Não foi possível conectar ao servidor.");
+      // Você pode implementar um modal ou mensagem na tela para o usuário
     }
   }, []);
 
@@ -60,9 +62,9 @@ function App() {
   const handleGameOver = useCallback(async (score, stats) => {
     try {
         await axios.post(`${API_URL}/api/partidas`, {
-            email: playerData.email,
-            score,
-            stats
+          email: playerData.email,
+          score,
+          stats
         });
         setLastGameResult({ score });
         setGameState('popup');
