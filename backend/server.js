@@ -1,90 +1,82 @@
 const express = require('express');
 const { Pool } = require('pg');
-const cors = require('cors');
+const cors = require('cors'); // Adicionado
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 5000;
+
+// Middlewares
+app.use(cors()); // Adicionado para permitir requisições de outras origens
+app.use(express.json()); // Adicionado para interpretar o corpo das requisições como JSON
 
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'senac_jogo',
-  password: 'Liloka*8', // <-- LEMBRE-SE DE USAR A SUA SENHA
-  port: 5432,
-});
-
-app.use(cors());
-app.use(express.json());
-
-// ROTA 1: Cadastro de um novo jogador (só acontece na primeira vez)
-app.post('/api/jogador', async (req, res) => {
-  const { nome, email, telefone } = req.body;
-  try {
-    // Tenta inserir, mas ignora se o e-mail já existir (ON CONFLICT)
-    const query = `
-      INSERT INTO jogadores (nome, email, telefone)
-      VALUES ($1, $2, $3)
-      ON CONFLICT (email) DO NOTHING;
-    `;
-    await pool.query(query, [nome, email, telefone]);
-    res.status(201).json({ message: 'Jogador cadastrado ou já existente.' });
-  } catch (error) {
-    console.error('Erro ao salvar jogador:', error);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
   }
 });
 
-// ROTA 2: Salvar o resultado de uma partida
-app.post('/api/partidas', async (req, res) => {
-  const { email, score, stats } = req.body;
+// Rota para registrar um novo usuário
+app.post('/api/register', async (req, res) => {
+  const { username, password } = req.body;
   try {
-    const query = 'INSERT INTO partidas (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
-    await pool.query(query, [email, score, stats]);
-    res.status(201).json({ message: 'Partida salva com sucesso!' });
-  } catch (error) {
-    console.error('Erro ao salvar partida:', error);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+    const newUser = await pool.query(
+      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *",
+      [username, password]
+    );
+    res.json(newUser.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
 });
 
-// ROTA 3: Buscar todos os dados para o dashboard de um jogador
-app.get('/api/dashboard/:email', async (req, res) => {
-  const { email } = req.params;
+// Rota para login de usuário
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
   try {
-    const query = `
-      SELECT
-        (SELECT nome FROM jogadores WHERE email = $1) as nome_jogador,
-        (SELECT COUNT(*) FROM partidas WHERE jogador_email = $1) as total_partidas,
-        (SELECT MAX(pontuacao) FROM partidas WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
-        (SELECT pontuacao FROM partidas WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
-        (SELECT jsonb_object_agg(key, value) FROM (SELECT key, SUM((stats_coletados->>key)::int) AS value FROM partidas, jsonb_each_text(stats_coletados) WHERE jogador_email = $1 GROUP BY key) AS stats) as stats_totais
-    `;
-    const result = await pool.query(query, [email]);
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Erro ao buscar dados do dashboard:', error);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+    const user = await pool.query("SELECT * FROM users WHERE username = $1", [username]);
+    if (user.rows.length === 0) {
+      return res.status(401).json("Invalid Credential");
+    }
+    if (user.rows[0].password !== password) {
+      return res.status(401).json("Invalid Credential");
+    }
+    res.json({ message: "Logged in successfully", user: user.rows[0] });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
 });
 
-// ROTA 4: Buscar o recorde global
-app.get('/api/leaderboard/top', async (req, res) => {
+// Rota para salvar a pontuação
+app.post('/api/scores', async (req, res) => {
+  const { userId, score } = req.body;
   try {
-    const query = `
-      SELECT p.pontuacao, j.nome
-      FROM partidas p
-      JOIN jogadores j ON p.jogador_email = j.email
-      ORDER BY p.pontuacao DESC
-      LIMIT 1;
-    `;
-    const result = await pool.query(query);
-    res.json(result.rows[0] || { pontuacao: 0, nome: 'Ninguém' });
-  } catch (error) {
-    console.error('Erro ao buscar recorde global:', error);
-    res.status(500).json({ error: 'Erro interno do servidor.' });
+    const newScore = await pool.query(
+      "INSERT INTO scores (user_id, score) VALUES ($1, $2) RETURNING *",
+      [userId, score]
+    );
+    res.json(newScore.rows[0]);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// Rota para obter os 10 melhores scores
+app.get('/api/scores', async (req, res) => {
+  try {
+    const topScores = await pool.query(
+      "SELECT u.username, s.score FROM scores s JOIN users u ON s.user_id = u.id ORDER BY s.score DESC LIMIT 10"
+    );
+    res.json(topScores.rows);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
   }
 });
 
 app.listen(port, () => {
-  console.log(`Backend rodando em http://localhost:${port}`);
+  console.log(`Server is running on port ${port}`);
 });
