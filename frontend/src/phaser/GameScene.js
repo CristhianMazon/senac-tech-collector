@@ -32,7 +32,7 @@ function criarItem(scene, itemsGroup, bonusGroup, badItemGroup, itemTypes, pontu
   if (itemKey === 'senac') {
     item.setScale(0.2); // Um tamanho bom para a logo
   } else {
-    item.setScale(1.8);  // Um tamanho maior para os outros itens
+    item.setScale(0.07);  // Um tamanho maior para os outros itens
   }
   // Você pode ajustar os valores 0.25 e 0.5 se quiser!
   // ==================================================================
@@ -81,11 +81,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('computador', 'assets/MonitorSenac.jpg');
-    this.load.image('mouse', 'assets/MouseSenac.jpg');
-    this.load.image('teclado', 'assets/TecladoSenac.jpg');
-    this.load.image('relogio', 'assets/RelogioSenac.jpg');
-    this.load.image('virus', 'assets/VirusSenac.jpg');
+    this.load.image('computador', 'assets/MonitorSenac.png');
+    this.load.image('mouse', 'assets/MouseSenac.png');
+    this.load.image('teclado', 'assets/TecladoSenac.png');
+    this.load.image('relogio', 'assets/RelogioSenac.png');
+    this.load.image('virus', 'assets/VirusSenac.png');
     this.load.image('senac', 'assets/LogoSenac.png');
 
     const graphics = this.make.graphics();

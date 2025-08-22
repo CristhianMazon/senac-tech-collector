@@ -89,7 +89,7 @@ function Dashboard({ player, onPlay, onLogout }) {
           <div className="items-column">
             <h3>Total de Itens Coletados</h3>
             <div className="items-box">
-              <div><span>💻</span> Computador: {stats_totais?.computador || 0}</div>
+              <div><span>🖥️</span> Monitor: {stats_totais?.computador || 0}</div>
               <div><span>🖱️</span> Mouse: {stats_totais?.mouse || 0}</div>
               <div><span>⌨️</span> Teclado: {stats_totais?.teclado || 0}</div>
               <div><span>🎓</span> Logo SENAC: {stats_totais?.senac || 0}</div>
