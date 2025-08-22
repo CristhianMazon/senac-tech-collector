@@ -158,5 +158,5 @@ body, html, #root {
 
 /* Posições dos elementos da UI */
 #info-usuario { top: 15px; right: 15px; }
-#score-display { top: 15px; left: 15px; margin-bottom: 2vh; }
-#timer-display { top: 70px; left: 15px; }
+#score-display { top: 15px; left: 15px; }
+#timer-display { top: 100px; left: 15px; }
