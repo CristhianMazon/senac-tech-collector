@@ -28,13 +28,19 @@ function criarItem(scene, itemsGroup, bonusGroup, badItemGroup, itemTypes, pontu
 
   // ==================================================================
   // MUDANÇA PRINCIPAL AQUI: Tamanhos diferentes para cada item
+  // e escalonamento responsivo
   // ==================================================================
+  // A escala baseada na altura da tela faz com que os itens se ajustem em qualquer dispositivo.
+  const baseScale = scene.cameras.main.height / 1080; // Usa a altura do viewport como referência. Considere 1080p como base.
+  
   if (itemKey === 'senac') {
-    item.setScale(0.2); // Um tamanho bom para a logo
+    item.setScale(0.25 * baseScale);
+  } else if (itemKey === 'virus') {
+    item.setScale(0.12 * baseScale);
   } else {
-    item.setScale(0.07);  // Um tamanho maior para os outros itens
+    item.setScale(0.18 * baseScale);
   }
-  // Você pode ajustar os valores 0.25 e 0.5 se quiser!
+  
   // ==================================================================
 
 
@@ -81,6 +87,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   preload() {
+    // Carregar a nova imagem de fundo
+    this.load.image('fundoJogo', 'assets/FundoJogo.jpg');
+
     this.load.image('computador', 'assets/MonitorSenac.png');
     this.load.image('mouse', 'assets/MouseSenac.png');
     this.load.image('teclado', 'assets/TecladoSenac.png');
@@ -96,6 +105,12 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    // Adicionar a imagem de fundo e ajustá-la para preencher a tela
+    const { width, height } = this.cameras.main;
+    const background = this.add.image(0, 0, 'fundoJogo').setOrigin(0);
+    background.displayWidth = width;
+    background.displayHeight = height;
+
     this.pontuacao = 0;
     this.tempoRestante = 60;
     this.stats = { computador: 0, mouse: 0, teclado: 0, senac: 0, relogio: 0, virus: 0 };
@@ -123,7 +138,7 @@ export default class GameScene extends Phaser.Scene {
       loop: true
     });
 
-    this.gameTimer = this.time.addEvent({
+    this.gameTimer = this.time.add.event({
       delay: 1000,
       callback: () => {
         this.tempoRestante--;
