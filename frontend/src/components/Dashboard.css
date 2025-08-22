@@ -180,3 +180,74 @@
   transform: translateY(6px);
   box-shadow: 0 4px 0 var(--azul-escuro);
 }
+/* ================================================= */
+/* ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVEIS      */
+/* (Empilha os elementos para melhor visualização)   */
+/* ================================================= */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 15px 20px; /* Reduz o padding do cabeçalho */
+  }
+
+  .player-info {
+    gap: 10px; /* Reduz o espaçamento entre os elementos do cabeçalho */
+  }
+  
+  .player-name,
+  .company-name {
+    font-size: clamp(1.2rem, 4vw, 2.8rem); /* Reduz a fonte no cabeçalho */
+    -webkit-text-stroke: clamp(1px, 0.2vw, 4px) black;
+    text-stroke: clamp(1px, 0.2vw, 4px) black;
+  }
+
+  .vertical-divider {
+    height: 30px; /* Reduz a altura da linha divisória */
+  }
+
+  .logout-button {
+    font-size: clamp(1.2rem, 3vw, 1.8rem); /* Reduz o tamanho da fonte do botão */
+    padding: 8px 15px; /* Reduz o padding do botão */
+    box-shadow: 0 4px 0 var(--vermelho-escuro);
+  }
+  .logout-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--vermelho-escuro);
+  }
+
+  .dashboard-main {
+    flex-direction: column; /* Empilha as colunas verticalmente */
+    align-items: center; /* Centraliza as colunas */
+    width: 95%; /* Usa quase a largura total da tela */
+    max-width: none; /* Remove a largura máxima */
+    padding: 2vh 0; /* Ajusta o padding para telas pequenas */
+  }
+  
+  .stats-column,
+  .items-column {
+    width: 95%; /* As colunas agora ocupam a largura total do container */
+    padding: 2vh 10px; /* Ajusta o padding das colunas */
+    margin-bottom: 2vh; /* Adiciona espaço entre os quadros empilhados */
+  }
+  
+  .stats-column h3, 
+  .items-column h3 {
+    font-size: clamp(1.5rem, 5vw, 2.5rem); /* Ajusta a fonte do título */
+    -webkit-text-stroke: clamp(2px, 0.4vw, 4px) black;
+    text-stroke: clamp(2px, 0.4vw, 4px) black;
+  }
+  
+  .stat-box {
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    padding: 1.5vh 10px;
+  }
+
+  .items-box {
+    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    line-height: clamp(1.5rem, 4vw, 2.8rem);
+  }
+
+  .play-button {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    padding: 1.5vh 10vw;
+  }
+}
