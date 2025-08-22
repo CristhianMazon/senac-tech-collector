@@ -1,3 +1,4 @@
+/* Conteúdo de frontend/src/components/Dashboard.css */
 /* --- CABEÇALHO FIXO --- */
 .dashboard-header {
   position: fixed;
@@ -63,7 +64,6 @@
   transform: translateY(4px);
   box-shadow: 0 2px 0 var(--vermelho-escuro);
 }
-
 
 /* --- CONTAINER DO CONTEÚDO SCROLLÁVEL --- */
 .dashboard-content-wrapper {
@@ -180,7 +180,6 @@
   box-shadow: 0 4px 0 var(--azul-escuro);
 }
 
-
 /* ================================================= */
 /* ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVEIS      */
 /* e Monitores na Vertical                           */
@@ -243,9 +242,34 @@
   }
 
   .items-box {
-    font-size: clamp(1rem, 3.5vw, 1.8rem);
-    line-height: clamp(1.5rem, 4vw, 2.8rem);
+    background-color: var(--cinza-escuro);
+    width: 90%;
+    flex-grow: 1;
+    border-radius: 15px;
+    padding: 2vh 1.5vw;
+    -webkit-text-stroke: 3px black;
+    text-stroke: 3px black;
+    paint-order: stroke fill;
+    overflow-y: auto;
   }
+
+  /* === CORREÇÃO DE ALINHAMENTO === */
+  /* Alinha cada item coletado em uma linha flexível */
+  .items-box div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Adiciona espaço entre as linhas */
+    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    line-height: 1.2;
+  }
+  .items-box span {
+    font-size: 2rem;
+    -webkit-text-stroke: 0;
+    text-stroke: 0;
+    margin-right: 15px;
+    vertical-align: middle;
+  }
+  /* =============================== */
 
   .play-button {
     font-size: clamp(2rem, 5vw, 3.5rem);
