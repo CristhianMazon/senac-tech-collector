@@ -88,7 +88,7 @@ export default class GameScene extends Phaser.Scene {
 
   preload() {
     // Carregar a nova imagem de fundo
-    this.load.image('fundoJogo', 'assets/FundoJogo.jpg');
+    this.load.image('fundoJogo', 'assets/FundoJogo.png');
 
     this.load.image('computador', 'assets/MonitorSenac.png');
     this.load.image('mouse', 'assets/MouseSenac.png');
