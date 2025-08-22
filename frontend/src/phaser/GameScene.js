@@ -28,19 +28,13 @@ function criarItem(scene, itemsGroup, bonusGroup, badItemGroup, itemTypes, pontu
 
   // ==================================================================
   // MUDANÇA PRINCIPAL AQUI: Tamanhos diferentes para cada item
-  // e escalonamento responsivo
   // ==================================================================
-  // A escala baseada na altura da tela faz com que os itens se ajustem em qualquer dispositivo.
-  const baseScale = scene.cameras.main.height / 1080; // Usa a altura do viewport como referência. Considere 1080p como base.
-  
+  // Revertido para os valores fixos originais
   if (itemKey === 'senac') {
-    item.setScale(0.25 * baseScale);
-  } else if (itemKey === 'virus') {
-    item.setScale(0.12 * baseScale);
+    item.setScale(0.2); // Um tamanho bom para a logo
   } else {
-    item.setScale(0.18 * baseScale);
+    item.setScale(0.07); // Um tamanho maior para os outros itens
   }
-  
   // ==================================================================
 
 
@@ -88,7 +82,7 @@ export default class GameScene extends Phaser.Scene {
 
   preload() {
     // Carregar a nova imagem de fundo
-    this.load.image('fundoJogo', 'assets/FundoJogo.png');
+    this.load.image('fundoJogo', 'assets/FundoJogo.jpg');
 
     this.load.image('computador', 'assets/MonitorSenac.png');
     this.load.image('mouse', 'assets/MouseSenac.png');
@@ -110,6 +104,7 @@ export default class GameScene extends Phaser.Scene {
     const background = this.add.image(0, 0, 'fundoJogo').setOrigin(0);
     background.displayWidth = width;
     background.displayHeight = height;
+    background.setDepth(-1); // Isso garante que o fundo fique atrás de todos os outros elementos do jogo.
 
     this.pontuacao = 0;
     this.tempoRestante = 60;
