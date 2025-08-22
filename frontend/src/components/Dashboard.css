@@ -18,18 +18,17 @@
 .player-info {
   display: flex;
   align-items: center;
-  gap: 25px; /* Espaço entre o nome, a linha e o texto do Senac */
+  gap: 25px;
 }
 
 .vertical-divider {
   width: 5px;
-  height: 50px; /* Altura da linha */
+  height: 50px;
   background-color: var(--cinza-claro);
   border-radius: 3px;
 }
 
 .company-name {
-  /* Aplicando EXATAMENTE o mesmo estilo do .player-name */
   font-size: 2.8rem;
   color: var(--azul-brilhante);
   -webkit-text-stroke: 4px black;
@@ -180,33 +179,35 @@
   transform: translateY(6px);
   box-shadow: 0 4px 0 var(--azul-escuro);
 }
+
+
 /* ================================================= */
 /* ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVEIS      */
-/* (Empilha os elementos para melhor visualização)   */
+/* e Monitores na Vertical                           */
 /* ================================================= */
-@media (max-width: 768px) {
+@media (max-width: 768px), (max-aspect-ratio: 1/1) {
   .dashboard-header {
-    padding: 15px 20px; /* Reduz o padding do cabeçalho */
+    padding: 15px 20px;
   }
 
   .player-info {
-    gap: 10px; /* Reduz o espaçamento entre os elementos do cabeçalho */
+    gap: 10px;
   }
   
   .player-name,
   .company-name {
-    font-size: clamp(1.2rem, 4vw, 2.8rem); /* Reduz a fonte no cabeçalho */
+    font-size: clamp(1.2rem, 4vw, 2.8rem);
     -webkit-text-stroke: clamp(1px, 0.2vw, 4px) black;
     text-stroke: clamp(1px, 0.2vw, 4px) black;
   }
 
   .vertical-divider {
-    height: 30px; /* Reduz a altura da linha divisória */
+    height: 30px;
   }
 
   .logout-button {
-    font-size: clamp(1.2rem, 3vw, 1.8rem); /* Reduz o tamanho da fonte do botão */
-    padding: 8px 15px; /* Reduz o padding do botão */
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    padding: 8px 15px;
     box-shadow: 0 4px 0 var(--vermelho-escuro);
   }
   .logout-button:active {
@@ -215,23 +216,23 @@
   }
 
   .dashboard-main {
-    flex-direction: column; /* Empilha as colunas verticalmente */
-    align-items: center; /* Centraliza as colunas */
-    width: 95%; /* Usa quase a largura total da tela */
-    max-width: none; /* Remove a largura máxima */
-    padding: 2vh 0; /* Ajusta o padding para telas pequenas */
+    flex-direction: column;
+    align-items: center;
+    width: 95%;
+    max-width: none;
+    padding: 2vh 0;
   }
   
   .stats-column,
   .items-column {
-    width: 95%; /* As colunas agora ocupam a largura total do container */
-    padding: 2vh 10px; /* Ajusta o padding das colunas */
-    margin-bottom: 2vh; /* Adiciona espaço entre os quadros empilhados */
+    width: 95%;
+    padding: 2vh 10px;
+    margin-bottom: 2vh;
   }
   
   .stats-column h3, 
   .items-column h3 {
-    font-size: clamp(1.5rem, 5vw, 2.5rem); /* Ajusta a fonte do título */
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
     -webkit-text-stroke: clamp(2px, 0.4vw, 4px) black;
     text-stroke: clamp(2px, 0.4vw, 4px) black;
   }
