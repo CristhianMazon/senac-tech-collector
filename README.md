@@ -114,6 +114,7 @@ O app abrirá em: **http://localhost:3000**
 
 ## 📦 Estrutura de Pastas
 
+```
 backend
 ├── node_modules
 ├── package-lock.json
@@ -146,6 +147,7 @@ frontend
 ├── README.md
 ├── package-lock.json
 ├── package.json
+```
 
 ---
 
