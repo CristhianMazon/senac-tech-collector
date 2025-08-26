@@ -8,8 +8,8 @@ import ComoJogarPopup from './components/ComoJogarPopup';
 import Cadastro from './components/Cadastro';
 import JogoUI from './components/JogoUI';
 import GameScene from './phaser/GameScene';
+import Loja from './components/Loja';
 
-// Use a variável de ambiente para a URL da API, com um fallback para desenvolvimento local
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function App() {
@@ -22,65 +22,85 @@ function App() {
   const gameInstanceRef = React.useRef(null);
 
   useEffect(() => {
+    console.log("App.js: useEffect inicial");
     const savedPlayer = localStorage.getItem('playerData');
     if (savedPlayer) {
+      console.log("App.js: Jogador encontrado no localStorage. Mudando para dashboard.");
       setPlayerData(JSON.parse(savedPlayer));
       setGameState('dashboard');
     }
   }, []);
 
   const handleCadastro = useCallback(async (data) => {
+    console.log("App.js: Chamando handleCadastro com dados:", data);
     try {
-      await axios.post(`${API_URL}/api/jogador`, data);
+      const response = await axios.post(`${API_URL}/api/jogador`, data);
+      console.log("App.js: Resposta do backend recebida:", response);
       localStorage.setItem('playerData', JSON.stringify(data));
       setPlayerData(data);
       setGameState('dashboard');
     } catch (error) {
-      console.error("Erro ao cadastrar:", error);
-      // Alterado para usar um alerta customizado em vez de alert()
-      // alert("Não foi possível conectar ao servidor.");
-      // Você pode implementar um modal ou mensagem na tela para o usuário
+      console.error("App.js: Erro ao cadastrar:", error);
+      alert("Não foi possível conectar ao servidor. Verifique sua conexão ou tente mais tarde.");
     }
   }, []);
 
   const handleLogout = useCallback(() => {
+    console.log("App.js: Fazendo logout.");
     localStorage.removeItem('playerData');
     setPlayerData(null);
     setGameState('cadastro');
   }, []);
 
   const handleShowComoJogar = useCallback(() => {
+    console.log("App.js: Exibindo popup Como Jogar.");
     setShowComoJogar(true);
   }, []);
 
   const handleStartGame = useCallback(() => {
+    console.log("App.js: Iniciando jogo.");
     setShowComoJogar(false);
     setUiData({ score: 0, time: 60 });
     setGameState('jogando');
   }, []);
   
   const handleGameOver = useCallback(async (score, stats) => {
+    console.log("App.js: Jogo terminou. Tentando salvar partida.");
     try {
-        await axios.post(`${API_URL}/api/partidas`, {
+        const response = await axios.post(`${API_URL}/api/partidas`, {
           email: playerData.email,
           score,
           stats
         });
+        console.log("App.js: Resposta do backend ao salvar partida:", response);
         setLastGameResult({ score });
         setGameState('popup');
     } catch (error) {
-        console.error("Erro ao salvar partida:", error);
+        console.error("App.js: Erro ao salvar partida:", error);
+        alert("Não foi possível salvar a partida. Tente novamente mais tarde.");
         setGameState('dashboard');
     }
   }, [playerData]);
 
   const handleClosePopup = useCallback(() => {
+    console.log("App.js: Fechando popup de score.");
     setLastGameResult(null);
     setGameState('dashboard');
   }, []);
 
+  // Novo handler para a loja
+  const handleShowStore = useCallback(() => {
+    setGameState('loja');
+  }, []);
+
+  const handleCloseStore = useCallback(() => {
+    setGameState('dashboard');
+  }, []);
+
   useEffect(() => {
+    console.log("App.js: Estado do jogo atual:", gameState);
     if (gameState === 'jogando' && !gameInstanceRef.current) {
+      console.log("App.js: Criando nova instância do jogo Phaser.");
       const config = {
         type: Phaser.AUTO,
         width: window.innerWidth,
@@ -104,6 +124,7 @@ function App() {
     }
     
     if (gameState !== 'jogando' && gameInstanceRef.current) {
+      console.log("App.js: Destruindo instância do jogo Phaser.");
       gameInstanceRef.current.destroy(true);
       gameInstanceRef.current = null;
     }
@@ -138,9 +159,12 @@ function App() {
           player={playerData} 
           onPlay={handleShowComoJogar} 
           onLogout={handleLogout}
+          onStore={handleShowStore}
         />
       )}
       
+      {gameState === 'loja' && <Loja onClose={handleCloseStore} />}
+
       {gameState === 'popup' && lastGameResult && (
         <ScorePopup score={lastGameResult.score} onClose={handleClosePopup} />
       )}

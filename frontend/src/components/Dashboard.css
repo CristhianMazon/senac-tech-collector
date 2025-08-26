@@ -1,4 +1,3 @@
-/* Conteúdo de frontend/src/components/Dashboard.css */
 /* --- CABEÇALHO FIXO --- */
 .dashboard-header {
   position: fixed;
@@ -45,7 +44,7 @@
   paint-order: stroke fill;
 }
 
-.logout-button {
+.logout-button, .shop-button {
   background-color: var(--vermelho-brilhante);
   color: var(--branco);
   border: 4px solid var(--vermelho-escuro);
@@ -60,9 +59,14 @@
   text-stroke: 3px black;
   paint-order: stroke fill;
 }
-.logout-button:active {
+.logout-button:active, .shop-button:active {
   transform: translateY(4px);
   box-shadow: 0 2px 0 var(--vermelho-escuro);
+}
+
+.header-buttons {
+    display: flex;
+    gap: 15px;
 }
 
 /* --- CONTAINER DO CONTEÚDO SCROLLÁVEL --- */
@@ -135,8 +139,6 @@
   flex-grow: 1;
   border-radius: 15px;
   padding: 2vh 1.5vw;
-  font-size: clamp(1rem, 1.5vw, 1.8rem);
-  line-height: clamp(1.8rem, 2.5vw, 2.8rem);
   -webkit-text-stroke: 3px black;
   text-stroke: 3px black;
   paint-order: stroke fill;
@@ -180,6 +182,7 @@
   box-shadow: 0 4px 0 var(--azul-escuro);
 }
 
+
 /* ================================================= */
 /* ESTILOS ESPECÍFICOS PARA DISPOSITIVOS MÓVEIS      */
 /* e Monitores na Vertical                           */
@@ -204,12 +207,12 @@
     height: 30px;
   }
 
-  .logout-button {
+  .logout-button, .shop-button {
     font-size: clamp(1.2rem, 3vw, 1.8rem);
     padding: 8px 15px;
     box-shadow: 0 4px 0 var(--vermelho-escuro);
   }
-  .logout-button:active {
+  .logout-button:active, .shop-button:active {
     transform: translateY(2px);
     box-shadow: 0 2px 0 var(--vermelho-escuro);
   }
@@ -258,7 +261,7 @@
   .items-box div {
     display: flex;
     align-items: center;
-    margin-bottom: 10px; /* Adiciona espaço entre as linhas */
+    margin-bottom: 10px;
     font-size: clamp(1rem, 3.5vw, 1.8rem);
     line-height: 1.2;
   }

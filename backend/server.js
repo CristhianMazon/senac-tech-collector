@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3001;
+const TECHCOIN_RATE = 100; // 1 Techcoin a cada 100 pontos
 
 // Configuração para conectar ao banco de dados no Render, usando variáveis de ambiente
 const pool = new Pool({
@@ -33,12 +34,17 @@ app.post('/api/jogador', async (req, res) => {
   }
 });
 
-// ROTA 2: Salvar o resultado de uma partida
+// ROTA 2: Salvar o resultado de uma partida e adicionar Techcoins
 app.post('/api/partidas', async (req, res) => {
   const { email, score, stats } = req.body;
   try {
     const query = 'INSERT INTO public.partidas (jogador_email, pontuacao, stats_coletados) VALUES ($1, $2, $3)';
     await pool.query(query, [email, score, stats]);
+
+    // Adiciona Techcoins ao jogador
+    const techcoinsGanhos = Math.floor(score / TECHCOIN_RATE);
+    await pool.query('UPDATE public.jogadores SET techcoins = techcoins + $1 WHERE email = $2', [techcoinsGanhos, email]);
+
     res.status(201).json({ message: 'Partida salva com sucesso!' });
   } catch (error) {
     console.error('Erro ao salvar partida:', error);
@@ -53,6 +59,7 @@ app.get('/api/dashboard/:email', async (req, res) => {
     const query = `
       SELECT
         (SELECT nome FROM public.jogadores WHERE email = $1) as nome_jogador,
+        (SELECT techcoins FROM public.jogadores WHERE email = $1) as techcoins,
         (SELECT COUNT(*) FROM public.partidas WHERE jogador_email = $1) as total_partidas,
         (SELECT MAX(pontuacao) FROM public.partidas WHERE jogador_email = $1) as pontuacao_maxima_pessoal,
         (SELECT pontuacao FROM public.partidas WHERE jogador_email = $1 ORDER BY data_partida DESC LIMIT 1) as ultima_pontuacao,
@@ -80,6 +87,17 @@ app.get('/api/leaderboard/top', async (req, res) => {
     res.json(result.rows[0] || { pontuacao: 0, nome: 'Ninguém' });
   } catch (error) {
     console.error('Erro ao buscar recorde global:', error);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+// ROTA 5: Listar itens da loja
+app.get('/api/loja/itens', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM public.loja_itens ORDER BY custo ASC');
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Erro ao buscar itens da loja:', error);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
