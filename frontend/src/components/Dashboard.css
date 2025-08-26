@@ -44,7 +44,7 @@
   paint-order: stroke fill;
 }
 
-.logout-button, .shop-button {
+.logout-button {
   background-color: var(--vermelho-brilhante);
   color: var(--branco);
   border: 4px solid var(--vermelho-escuro);
@@ -59,9 +59,30 @@
   text-stroke: 3px black;
   paint-order: stroke fill;
 }
-.logout-button:active, .shop-button:active {
+.logout-button:active {
   transform: translateY(4px);
   box-shadow: 0 2px 0 var(--vermelho-escuro);
+}
+
+/* Alteração para o botão da loja */
+.shop-button {
+  background-color: var(--azul-brilhante);
+  color: var(--branco);
+  border: 4px solid var(--azul-escuro);
+  border-radius: 15px;
+  padding: 10px 30px;
+  font-size: 1.8rem;
+  font-family: 'Lilita One', cursive;
+  cursor: pointer;
+  box-shadow: 0 6px 0 var(--azul-escuro);
+  transition: all 0.1s;
+  -webkit-text-stroke: 3px black;
+  text-stroke: 3px black;
+  paint-order: stroke fill;
+}
+.shop-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--azul-escuro);
 }
 
 .header-buttons {
@@ -144,13 +165,21 @@
   paint-order: stroke fill;
   overflow-y: auto;
 }
+.items-box div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: clamp(1rem, 3.5vw, 1.8rem);
+    line-height: 1.2;
+}
 .items-box span {
   font-size: 2rem;
   -webkit-text-stroke: 0;
   text-stroke: 0;
-  margin-right: 10px;
+  margin-right: 15px;
   vertical-align: middle;
 }
+
 
 .dashboard-footer {
   display: flex;
