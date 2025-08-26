@@ -4,7 +4,7 @@ const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3001;
-const TECHCOIN_RATE = 100; // 1 Techcoin a cada 100 pontos
+const TECHCOIN_RATE = 10; // 1 Techcoin a cada 10 pontos
 
 // Configuração para conectar ao banco de dados no Render, usando variáveis de ambiente
 const pool = new Pool({
@@ -98,6 +98,51 @@ app.get('/api/loja/itens', async (req, res) => {
     res.json(result.rows);
   } catch (error) {
     console.error('Erro ao buscar itens da loja:', error);
+    res.status(500).json({ error: 'Erro interno do servidor.' });
+  }
+});
+
+// ROTA 6: Comprar um item da loja
+app.post('/api/loja/comprar', async (req, res) => {
+  const { email, itemId } = req.body;
+  try {
+    await pool.query('BEGIN'); // Inicia uma transação
+
+    // 1. Encontra o jogador e o item
+    const jogadorResult = await pool.query('SELECT techcoins FROM public.jogadores WHERE email = $1 FOR UPDATE', [email]);
+    const itemResult = await pool.query('SELECT custo, stock FROM public.loja_itens WHERE id = $1 FOR UPDATE', [itemId]);
+
+    const jogador = jogadorResult.rows[0];
+    const item = itemResult.rows[0];
+
+    // 2. Valida a compra
+    if (!jogador) {
+      await pool.query('ROLLBACK');
+      return res.status(404).json({ error: 'Jogador não encontrado.' });
+    }
+    if (!item) {
+      await pool.query('ROLLBACK');
+      return res.status(404).json({ error: 'Item não encontrado.' });
+    }
+    if (jogador.techcoins < item.custo) {
+      await pool.query('ROLLBACK');
+      return res.status(400).json({ error: 'Techcoins insuficientes.' });
+    }
+    if (item.stock <= 0) {
+      await pool.query('ROLLBACK');
+      return res.status(400).json({ error: 'Item esgotado.' });
+    }
+
+    // 3. Processa a compra
+    await pool.query('UPDATE public.jogadores SET techcoins = techcoins - $1 WHERE email = $2', [item.custo, email]);
+    await pool.query('UPDATE public.loja_itens SET stock = stock - 1 WHERE id = $1', [itemId]);
+    // Adicionar um registro da compra em uma tabela 'compras' seria ideal aqui.
+
+    await pool.query('COMMIT'); // Finaliza a transação
+    res.status(200).json({ message: 'Compra realizada com sucesso!' });
+  } catch (error) {
+    await pool.query('ROLLBACK');
+    console.error('Erro ao comprar item:', error);
     res.status(500).json({ error: 'Erro interno do servidor.' });
   }
 });
