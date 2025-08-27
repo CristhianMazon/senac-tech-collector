@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function Dashboard({ player, onPlay, onLogout, onStore }) {
   const [dashboardData, setDashboardData] = useState(null);
-  const [leaderboard, setLeaderboard] = useState(null);
+  const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,9 +22,12 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
         console.log("Dashboard.js: Dados do leaderboard recebidos:", leadResponse.data);
         
         setDashboardData(dashResponse.data);
-        setLeaderboard(leadResponse.data);
+        // Garante que a leaderboard é um array
+        setLeaderboard(Array.isArray(leadResponse.data) ? leadResponse.data : []);
       } catch (error) {
         console.error("Dashboard.js: Erro ao buscar dados:", error);
+        setDashboardData(null);
+        setLeaderboard([]);
       } finally {
         setLoading(false);
       }
@@ -40,10 +43,11 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
     );
   }
 
-  if (!dashboardData || !leaderboard) {
+  // Verifica se os dados principais estão presentes antes de tentar renderizar
+  if (!dashboardData) {
       return (
         <header className="dashboard-header">
-            <div className="player-name">ERRO</div>
+            <div className="player-name">ERRO AO CARREGAR DADOS</div>
             <button className="logout-button" onClick={onLogout}>Sair</button>
         </header>
     );
@@ -88,15 +92,17 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
           </div>
 
           <div className="stats-column">
-            <h3>Top 5 Globais</h3>
-            {leaderboard.slice(0, 5).map((player, index) => (
-              <div key={index} className="stat-box">
-                <span>{player.nome.split(' ')[0]}</span>
-                <span>{player.pontuacao} pts</span>
-              </div>
-            ))}
+            <h3>Recorde Global</h3>
+            {leaderboard.length > 0 ? (
+                leaderboard.map((record, index) => (
+                    <div key={index} className="stat-box">
+                        {index + 1}. {record.nome && typeof record.nome === 'string' ? record.nome.split(' ')[0] : 'Jogador'}: {record.pontuacao} pts
+                    </div>
+                ))
+            ) : (
+                <div className="stat-box">Nenhum recorde ainda.</div>
+            )}
           </div>
-
         </main>
 
         <footer className="dashboard-footer">
