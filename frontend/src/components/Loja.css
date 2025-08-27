@@ -16,79 +16,96 @@
   background-color: #4d4a4a; /* Cor de fundo principal dos painéis */
   border-radius: 15px;
   padding: 30px;
-  max-width: 900px;
+  max-width: 1000px; /* Aumenta um pouco a largura máxima para mais espaço */
   width: 90%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
   border: 3px solid #686767;
+  display: flex; /* Usar flexbox para organizar o conteúdo interno */
+  flex-direction: column;
 }
 
 .form-popup-box h2 {
   color: #0088ff; /* Cor azul do título */
-  font-size: 2em;
+  font-size: 2.2em; /* Um pouco maior para destaque */
   font-weight: bold;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Mais espaço abaixo do título */
   text-shadow: 1px 1px 2px #003b6f;
 }
 
 /* Grid para os itens da loja */
 .loja-itens-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Aumenta um pouco o min-width dos cards */
+  gap: 25px; /* Aumenta o espaçamento entre os cards */
+  margin-top: 10px; /* Ajuste sutil */
+  flex-grow: 1; /* Permite que o grid ocupe o espaço disponível */
+  justify-content: center; /* Centraliza os itens no grid */
+  align-items: start; /* Alinha os itens ao topo */
 }
 
 /* Card de cada item */
 .item-card {
-  background-color: #686767; /* Cor do fundo do card, mais claro que o painel principal */
+  background-color: #686767; /* Cor do fundo do card */
   border-radius: 10px;
-  padding: 20px;
+  padding: 25px 20px; /* Ajusta o padding para mais espaço vertical */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; /* Distribui o espaço entre os itens do card */
+  align-items: center; /* Centraliza horizontalmente o conteúdo do card */
   text-align: center;
   border: 2px solid #4d4a4a;
+  min-height: 250px; /* Garante uma altura mínima para os cards */
 }
 
 .item-emoji {
-  font-size: 3em;
-  margin-bottom: 10px;
+  font-size: 3.5em; /* Emoji um pouco maior */
+  margin-bottom: 15px; /* Mais espaço abaixo do emoji */
 }
 
 .item-card h3 {
   color: #fff;
-  font-size: 1.5em;
-  margin-bottom: 5px;
+  font-size: 1.6em; /* Título do item um pouco maior */
+  margin-bottom: 8px; /* Ajuste de espaço */
+  font-weight: bold;
 }
 
 .item-card p {
   color: #ccc;
-  font-size: 0.9em;
+  font-size: 0.95em; /* Texto da descrição um pouco maior */
+  margin-bottom: 20px; /* Mais espaço antes do rodapé */
   flex-grow: 1; /* Permite que a descrição ocupe o espaço restante */
+  display: flex; /* Para centralizar o texto da descrição verticalmente se ela for curta */
+  align-items: center;
+  justify-content: center;
 }
 
 .item-footer {
-  margin-top: 15px;
+  width: 100%; /* Ocupa a largura total do card */
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column; /* Coloca custo e botão em coluna */
+  align-items: center; /* Centraliza tudo no rodapé */
+  gap: 10px; /* Espaço entre o custo e o botão */
 }
 
 .item-cost {
-  color: #0088ff; /* Cor azul para o custo, como os "Techcoins" na imagem */
+  color: #0088ff; /* Cor azul para o custo */
   font-weight: bold;
+  font-size: 1.1em; /* Custo um pouco maior */
 }
 
 /* Botões */
 .buy-button, .close-button {
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 12px 25px; /* Mais padding para botões maiores */
+  border-radius: 8px; /* Cantos um pouco mais arredondados */
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   border: none;
+  font-size: 1.1em; /* Texto do botão um pouco maior */
+  width: 80%; /* Botões com largura mais definida */
+  max-width: 200px; /* Largura máxima para não ficarem enormes */
 }
 
 .buy-button {
@@ -98,20 +115,32 @@
 
 .buy-button:hover {
   background-color: #003b6f; /* Azul mais escuro ao passar o mouse */
+  transform: translateY(-2px); /* Efeito sutil ao passar o mouse */
+}
+
+.buy-button:active {
+  transform: translateY(0);
 }
 
 .close-button {
   background-color: #6f0002; /* Vermelho do botão "Sair" */
   color: #fff;
-  margin-top: 20px;
-  width: 100%;
+  margin-top: 30px; /* Mais espaço acima do botão fechar */
+  width: 90%; /* Botão fechar um pouco mais largo */
+  max-width: 300px; /* Largura máxima para o botão fechar */
+  align-self: center; /* Centraliza o botão fechar no flex container */
 }
 
 .close-button:hover {
   background-color: #4d0001; /* Vermelho mais escuro ao passar o mouse */
+  transform: translateY(-2px);
 }
 
-/* Estilo para a mensagem de carregamento */
+.close-button:active {
+  transform: translateY(0);
+}
+
+/* Estilo para a mensagem de carregamento (mantido) */
 .form-popup-box h2.loading-message {
   color: #fff;
 }
