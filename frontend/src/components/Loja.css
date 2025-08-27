@@ -41,7 +41,7 @@
 /* Grid para os itens da loja */
 .loja-itens-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Aumentado para 250px */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
   margin-top: 10px;
   flex-grow: 1;
@@ -98,60 +98,74 @@
   color: #0088ff;
   font-weight: bold;
   font-size: 1.1em;
-  text-align: center; /* Centraliza o custo */
+  text-align: center;
 }
 
-/* Botões */
-.buy-button, .close-button {
-  padding: 12px 25px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  border: none;
-  font-size: 1.1em;
-  width: 100%; /* Ocupa a largura total do item-footer */
-  max-width: 200px;
-  text-align: center; /* Garante que o texto fique centralizado */
-}
+/* --- ESTILOS DE BOTÃO UNIFICADOS --- */
 
 .buy-button {
-  background-color: #0088ff;
+  background-color: #0088ff; /* Azul Brilhante */
   color: #fff;
-  display: block; /* Garante que o botão ocupe sua própria linha para centralização */
-  margin: 0 auto; /* Centraliza o botão dentro de seu container */
-}
-
-.buy-button:hover {
-  background-color: #003b6f;
-  transform: translateY(-2px);
+  border: 4px solid #003b6f; /* Azul Escuro */
+  border-radius: 15px;
+  padding: 10px 30px;
+  font-size: 1.8rem;
+  font-family: 'Lilita One', cursive;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #003b6f; /* Sombra inicial */
+  transition: all 0.1s;
+  -webkit-text-stroke: 3px black;
+  text-stroke: 3px black;
+  paint-order: stroke fill;
+  width: 100%;
+  max-width: 200px;
+  margin: 0 auto;
 }
 
 .buy-button:active {
-  transform: translateY(0);
+  transform: translateY(4px); /* Animação de clique */
+  box-shadow: 0 2px 0 #003b6f; /* Sombra menor ao clicar */
 }
 
 .close-button {
-  background-color: #6f0002;
+  background-color: #ff0000; /* Vermelho Brilhante */
   color: #fff;
+  border: 4px solid #6f0002; /* Vermelho Escuro */
+  border-radius: 15px;
+  padding: 10px 30px;
+  font-size: 1.8rem;
+  font-family: 'Lilita One', cursive;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #6f0002; /* Sombra inicial */
+  transition: all 0.1s;
+  -webkit-text-stroke: 3px black;
+  text-stroke: 3px black;
+  paint-order: stroke fill;
   margin-top: 25px;
   width: 90%;
   max-width: 300px;
   align-self: center;
-  flex-shrink: 0;
-  text-align: center; /* Centraliza o texto do botão fechar */
-}
-
-.close-button:hover {
-  background-color: #4d0001;
-  transform: translateY(-2px);
 }
 
 .close-button:active {
-  transform: translateY(0);
+  transform: translateY(4px); /* Animação de clique */
+  box-shadow: 0 2px 0 #6f0002; /* Sombra menor ao clicar */
 }
 
 /* Estilo para a mensagem de carregamento */
 .form-popup-box h2.loading-message {
   color: #fff;
+}
+
+/* Media Query para dispositivos móveis */
+@media (max-width: 768px), (max-aspect-ratio: 1/1) {
+  .buy-button, .close-button {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    padding: 8px 15px;
+    box-shadow: 0 4px 0 var(--vermelho-escuro);
+  }
+  .buy-button:active, .close-button:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--vermelho-escuro);
+  }
 }
