@@ -23,7 +23,13 @@ const auth = new google.auth.GoogleAuth({
 });
 const sheets = google.sheets({ version: 'v4', auth });
 
-app.use(cors());
+// Configuração CORRETA do CORS
+const corsOptions = {
+  origin: 'https://senac-tech-collector.vercel.app', // Permite apenas o domínio do seu frontend
+  optionsSuccessStatus: 200 // Para navegadores antigos que não entendem 204
+};
+
+app.use(cors(corsOptions)); // Use o middleware cors com a nova configuração
 app.use(express.json());
 
 // ROTA 1: Cadastro/Login do jogador
@@ -111,7 +117,7 @@ app.get('/api/loja/itens', async (req, res) => {
   }
 });
 
-// ROTA 6: Comprar um item da loja - FUNÇÃO ATUALIZADA
+// ROTA 6: Comprar um item da loja
 app.post('/api/loja/comprar', async (req, res) => {
   const { email, itemId } = req.body;
   try {
