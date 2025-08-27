@@ -89,9 +89,11 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
 
           <div className="stats-column">
             <h3>Recorde Global</h3>
-            <div className="stat-box">{leaderboard.nome.split(' ')[0]}</div>
-            <div className="stat-box">{leaderboard.pontuacao} pts</div>
-            <div className="stat-box"><span>🏆</span></div>
+            {leaderboard.map((record, index) => (
+              <div key={index} className="stat-box">
+                {index + 1}. {record.nome.split(' ')[0]}: {record.pontuacao} pts
+              </div>
+             ))}
           </div>
         </main>
 

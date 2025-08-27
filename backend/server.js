@@ -81,7 +81,7 @@ app.get('/api/leaderboard/top', async (req, res) => {
       FROM public.partidas p
       JOIN public.jogadores j ON p.jogador_email = j.email
       ORDER BY p.pontuacao DESC
-      LIMIT 1;
+      LIMIT 5;
     `;
     const result = await pool.query(query);
     res.json(result.rows[0] || { pontuacao: 0, nome: 'Ninguém' });
