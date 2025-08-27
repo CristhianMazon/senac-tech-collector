@@ -11,6 +11,12 @@ function Loja({ player, onBack }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Adicionada verificação para garantir que o objeto player existe
+        if (!player || !player.email) {
+            setLoading(false);
+            return;
+        }
+
         async function fetchData() {
             try {
                 setLoading(true);
@@ -29,26 +35,7 @@ function Loja({ player, onBack }) {
             }
         }
         fetchData();
-    }, [player.email]);
-
-    const handleBuy = async (itemId, itemCusto) => {
-        if (techcoins >= itemCusto) {
-            try {
-                await axios.post(`${API_URL}/api/loja/comprar`, {
-                    email: player.email,
-                    itemId: itemId,
-                });
-                alert('Compra realizada com sucesso!');
-                // Atualiza o saldo de techcoins após a compra
-                setTechcoins(techcoins - itemCusto);
-            } catch (error) {
-                alert(error.response?.data?.error || 'Erro ao realizar a compra.');
-                console.error("Erro ao comprar item:", error);
-            }
-        } else {
-            alert('Techcoins insuficientes!');
-        }
-    };
+    }, [player]); // player é agora a dependência do useEffect
 
     if (loading) {
         return (
@@ -57,7 +44,17 @@ function Loja({ player, onBack }) {
             </header>
         );
     }
-
+    
+    // Adicionada verificação para o caso de player não existir
+    if (!player) {
+        return (
+          <header className="dashboard-header">
+            <div className="player-name">ERRO AO CARREGAR DADOS</div>
+            <button className="logout-button" onClick={onBack}>Voltar</button>
+          </header>
+        );
+      }
+      
     return (
         <>
             <header className="dashboard-header">
