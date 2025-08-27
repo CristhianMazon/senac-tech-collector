@@ -10,7 +10,6 @@ function Loja({ player, onBack }) {
     const [techcoins, setTechcoins] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    // O useEffect é chamado para buscar os dados da loja e do jogador
     useEffect(() => {
         if (!player || !player.email) {
             setLoading(false);
@@ -35,7 +34,6 @@ function Loja({ player, onBack }) {
         fetchData();
     }, [player]);
 
-    // A função handleBuy precisa estar dentro do componente para ser acessada
     const handleBuy = async (itemId, itemCusto) => {
         if (techcoins >= itemCusto) {
             try {
@@ -54,7 +52,6 @@ function Loja({ player, onBack }) {
         }
     };
 
-    // Renderização condicional no topo do componente para evitar erros
     if (loading) {
         return (
             <header className="dashboard-header">
@@ -72,7 +69,6 @@ function Loja({ player, onBack }) {
         );
     }
       
-    // Renderização principal do componente
     return (
         <>
             <header className="dashboard-header">
