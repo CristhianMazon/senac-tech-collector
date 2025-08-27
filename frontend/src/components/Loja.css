@@ -1,13 +1,12 @@
 /* Conteúdo para o arquivo frontend/src/components/Loja.css */
 /* Estilos inspirados no dashboard para um visual unificado */
 :root {
-  --cinza-escuro: #2a2a2a;
-  --cinza-claro: #4d4d4d;
-  --azul-brilhante: #1a73e8;
-  --azul-escuro: #0a4c9c;
-  --vermelho-brilhante: #f44336;
-  --vermelho-escuro: #d32f2f;
-  --branco: #ffffff;
+    --fundo-principal: #121212; /* Fundo escuro, cor do dashboard */
+    --fundo-secundario: #1e1e1e; /* Cor para os cards, um pouco mais clara que o fundo */
+    --borda-card: #333333; /* Borda sutil para os cards */
+    --texto-primario: #ffffff;
+    --texto-secundario: #a0a0a0;
+    --cor-destaque: #00ff88; /* Verde brilhante para botões e preços */
 }
 
 .form-popup-overlay {
@@ -16,7 +15,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--cinza-escuro);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,20 +29,16 @@
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
   width: 90%;
   max-width: 800px;
-  color: var(--branco);
+  color: var(--texto-primario);
   position: relative;
   box-sizing: border-box;
 }
 
-h2 {
-    font-size: 2.5rem;
+.loja-header {
+    font-size: 2rem;
     font-weight: bold;
-    color: var(--azul-brilhante);
     text-align: center;
     margin-bottom: 20px;
-    -webkit-text-stroke: 4px black;
-    text-stroke: 4px black;
-    paint-order: stroke fill;
 }
 
 .loja-itens-grid {
@@ -61,7 +56,7 @@ h2 {
   border-radius: 15px;
   padding: 20px;
   text-align: center;
-  border: 1px solid var(--cinza-claro);
+  border: 1px solid var(--borda-card);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,16 +78,13 @@ h2 {
 .item-card h3 {
   margin: 0 0 5px 0;
   font-size: 1.2rem;
-  color: var(--azul-brilhante);
-  -webkit-text-stroke: 3px black;
-  text-stroke: 3px black;
-  paint-order: stroke fill;
+  color: var(--texto-primario);
 }
 
 .item-card p {
   font-size: 0.9rem;
   margin: 0;
-  color: var(--branco);
+  color: var(--texto-secundario);
   flex-grow: 1;
 }
 
@@ -108,52 +100,41 @@ h2 {
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 10px;
-  color: var(--azul-brilhante);
-  -webkit-text-stroke: 1px black;
-  text-stroke: 1px black;
+  color: var(--cor-destaque);
 }
 
 .buy-button {
-  background-color: var(--azul-brilhante);
-  color: var(--branco);
-  border: 4px solid var(--azul-escuro);
-  border-radius: 15px;
-  padding: 10px 30px;
+  background-color: var(--cor-destaque);
+  color: var(--fundo-principal);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
   font-size: 1rem;
   font-family: 'Lilita One', cursive;
   cursor: pointer;
-  box-shadow: 0 6px 0 var(--azul-escuro);
-  transition: all 0.1s;
-  -webkit-text-stroke: 3px black;
-  text-stroke: 3px black;
-  paint-order: stroke fill;
+  transition: background-color 0.2s, transform 0.2s;
+  width: 100%;
+  font-weight: bold;
 }
 
-.buy-button:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 var(--azul-escuro);
+.buy-button:hover {
+  background-color: #00c46b; /* Um tom um pouco mais escuro do verde no hover */
+  transform: translateY(-2px);
 }
 
 .close-button {
-  background-color: var(--vermelho-brilhante);
-  color: var(--branco);
-  border: 4px solid var(--vermelho-escuro);
-  border-radius: 15px;
-  padding: 10px 30px;
-  font-size: 1.2rem;
-  font-family: 'Lilita One', cursive;
-  cursor: pointer;
-  box-shadow: 0 6px 0 var(--vermelho-escuro);
-  transition: all 0.1s;
-  -webkit-text-stroke: 3px black;
-  text-stroke: 3px black;
-  paint-order: stroke fill;
   position: absolute;
   top: 15px;
   right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: var(--texto-secundario);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
 }
 
-.close-button:active {
-  transform: translateY(4px);
-  box-shadow: 0 2px 0 var(--vermelho-escuro);
+.close-button:hover {
+  color: var(--texto-primario);
 }
