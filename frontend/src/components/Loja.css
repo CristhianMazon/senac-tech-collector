@@ -83,7 +83,7 @@
   font-size: 1.2rem;
   margin: 0 0 5px 0;
   color: var(--loja-texto);
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: 3px black;
   text-stroke: 2px black;
   paint-order: stroke fill;
 }
@@ -91,7 +91,7 @@
 .item-card p {
   font-size: 0.9rem;
   margin: 0;
-  color: var(--loja-texto-sec);
+  color: var(--branco);
   flex-grow: 1;
 }
 
