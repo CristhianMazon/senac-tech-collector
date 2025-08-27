@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Loja.css';
+import './Loja.css'; // Você precisará criar este arquivo CSS
 
+// URL do backend local
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
 function Loja({ onClose }) {
@@ -22,7 +23,9 @@ function Loja({ onClose }) {
     fetchLojaItens();
   }, []);
 
+  // Esta função será implementada quando a rota de compra estiver pronta no backend
   const handleBuyItem = async (itemId) => {
+    // Lógica para comprar o item
     console.log("Comprando item:", itemId);
   };
 
@@ -39,8 +42,7 @@ function Loja({ onClose }) {
   return (
     <div className="form-popup-overlay">
       <div className="form-popup-box">
-        {/* Modificação: Cabeçalho com o nome da loja como o do dashboard */}
-        <h2 className="loja-header">Loja - Senac Hub de Tecnologia</h2>
+        <h2>Loja de Prêmios</h2>
         <div className="loja-itens-grid">
           {lojaItens.map(item => (
             <div key={item.id} className="item-card">
