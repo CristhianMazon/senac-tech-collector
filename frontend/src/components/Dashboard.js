@@ -9,6 +9,9 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Array de troféus para os 3 primeiros lugares
+  const trophies = ['🏆', '🥈', '🥉'];
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -22,7 +25,6 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
         console.log("Dashboard.js: Dados do leaderboard recebidos:", leadResponse.data);
         
         setDashboardData(dashResponse.data);
-        // Garante que a leaderboard é um array
         setLeaderboard(Array.isArray(leadResponse.data) ? leadResponse.data : []);
       } catch (error) {
         console.error("Dashboard.js: Erro ao buscar dados:", error);
@@ -43,7 +45,6 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
     );
   }
 
-  // Verifica se os dados principais estão presentes antes de tentar renderizar
   if (!dashboardData) {
       return (
         <header className="dashboard-header">
@@ -96,7 +97,9 @@ function Dashboard({ player, onPlay, onLogout, onStore }) {
             {leaderboard.length > 0 ? (
                 leaderboard.map((record, index) => (
                     <div key={index} className="stat-box">
-                        {index + 1}. {record.nome && typeof record.nome === 'string' ? record.nome.split(' ')[0] : 'Jogador'}: {record.pontuacao} pts
+                        {/* Exibe o troféu para os 3 primeiros lugares */}
+                        {index < 3 ? trophies[index] : ''} 
+                        {record.nome && typeof record.nome === 'string' ? record.nome.split(' ')[0] : 'Jogador'}: {record.pontuacao} pts
                     </div>
                 ))
             ) : (
