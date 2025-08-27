@@ -160,3 +160,57 @@
   transform: translateY(4px);
   box-shadow: 0 2px 0 var(--vermelho-escuro);
 }
+
+@media (max-width: 768px) {
+  .form-popup-box {
+    padding: 20px;
+  }
+
+  .loja-header {
+    font-size: 1.8rem;
+    -webkit-text-stroke: 2px black;
+    text-stroke: 2px black;
+  }
+
+  .loja-itens-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    max-height: 400px;
+  }
+
+  .item-card {
+    padding: 15px;
+  }
+
+  .item-emoji {
+    font-size: 2.5rem;
+  }
+
+  .item-card h3 {
+    font-size: 1rem;
+    -webkit-text-stroke: 1.5px black;
+    text-stroke: 1.5px black;
+  }
+
+  .item-card p {
+    font-size: 0.8rem;
+  }
+
+  .item-cost {
+    font-size: 1rem;
+  }
+
+  .buy-button {
+    font-size: 1.2rem;
+    padding: 8px 15px;
+    border-radius: 10px;
+  }
+
+  .close-button {
+    font-size: 1.5rem;
+    padding: 5px 10px;
+    border-radius: 10px;
+    top: 10px;
+    right: 10px;
+  }
+}
