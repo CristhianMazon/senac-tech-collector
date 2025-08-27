@@ -5,7 +5,7 @@ import './Loja.css'; // Você precisará criar este arquivo CSS
 // URL do backend local
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
-function Loja({ onClose }) {
+function Loja({ onClose, jogadorEmail }) {
   const [lojaItens, setLojaItens] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -23,10 +23,18 @@ function Loja({ onClose }) {
     fetchLojaItens();
   }, []);
 
-  // Esta função será implementada quando a rota de compra estiver pronta no backend
+  // FUNÇÃO ATUALIZADA PARA ENVIAR REQUISIÇÃO AO BACKEND
   const handleBuyItem = async (itemId) => {
-    // Lógica para comprar o item
-    console.log("Comprando item:", itemId);
+    try {
+      const response = await axios.post(`${API_URL}/api/loja/comprar`, {
+        email: jogadorEmail, // Assumindo que o email do jogador é passado como prop
+        itemId,
+      });
+      alert(response.data.message);
+      // Você pode querer recarregar os dados da loja ou do jogador após a compra
+    } catch (error) {
+      alert(error.response.data.error || "Erro ao processar a compra.");
+    }
   };
 
   if (loading) {

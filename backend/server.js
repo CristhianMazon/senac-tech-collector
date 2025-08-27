@@ -1,6 +1,8 @@
 const express = require('express');
 const { Pool } = require('pg');
 const cors = require('cors');
+const { google } = require('googleapis');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -13,6 +15,13 @@ const pool = new Pool({
     rejectUnauthorized: false
   }
 });
+
+// Autenticação com a API do Google Sheets
+const auth = new google.auth.GoogleAuth({
+  keyFile: path.join(__dirname, 'mygamelist-4b558-79d78559d00d.json'), // Caminho para o seu arquivo de credenciais
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+const sheets = google.sheets({ version: 'v4', auth });
 
 app.use(cors());
 app.use(express.json());
@@ -102,15 +111,15 @@ app.get('/api/loja/itens', async (req, res) => {
   }
 });
 
-// ROTA 6: Comprar um item da loja
+// ROTA 6: Comprar um item da loja - FUNÇÃO ATUALIZADA
 app.post('/api/loja/comprar', async (req, res) => {
   const { email, itemId } = req.body;
   try {
     await pool.query('BEGIN'); // Inicia uma transação
 
     // 1. Encontra o jogador e o item
-    const jogadorResult = await pool.query('SELECT techcoins FROM public.jogadores WHERE email = $1 FOR UPDATE', [email]);
-    const itemResult = await pool.query('SELECT custo, stock FROM public.loja_itens WHERE id = $1 FOR UPDATE', [itemId]);
+    const jogadorResult = await pool.query('SELECT nome, techcoins FROM public.jogadores WHERE email = $1 FOR UPDATE', [email]);
+    const itemResult = await pool.query('SELECT id, nome, custo, stock FROM public.loja_itens WHERE id = $1 FOR UPDATE', [itemId]);
 
     const jogador = jogadorResult.rows[0];
     const item = itemResult.rows[0];
@@ -133,12 +142,40 @@ app.post('/api/loja/comprar', async (req, res) => {
       return res.status(400).json({ error: 'Item esgotado.' });
     }
 
-    // 3. Processa a compra
+    // 3. Processa a compra no banco de dados
     await pool.query('UPDATE public.jogadores SET techcoins = techcoins - $1 WHERE email = $2', [item.custo, email]);
     await pool.query('UPDATE public.loja_itens SET stock = stock - 1 WHERE id = $1', [itemId]);
-    // Adicionar um registro da compra em uma tabela 'compras' seria ideal aqui.
-
     await pool.query('COMMIT'); // Finaliza a transação
+    
+    // 4. Lógica para enviar a requisição para uma planilha
+    const dataToSend = [
+      new Date().toISOString(),
+      jogador.nome, // Nome do jogador
+      email,
+      item.nome, // Nome do item
+      item.custo,
+    ];
+    
+    // Configura a requisição para a API do Google Sheets
+    const request = {
+      spreadsheetId: 'YOUR_SPREADSHEET_ID', // Substitua pelo ID da sua planilha
+      range: 'Sheet1!A1', // A aba e a célula onde começar a adicionar os dados
+      valueInputOption: 'USER_ENTERED',
+      insertDataOption: 'INSERT_ROWS',
+      resource: {
+        values: [dataToSend],
+      },
+    };
+
+    // Envia os dados para a planilha
+    sheets.spreadsheets.values.append(request, (err, response) => {
+      if (err) {
+        console.error('Erro ao enviar dados para a planilha:', err);
+      } else {
+        console.log('Dados de compra enviados para a planilha:', response.data);
+      }
+    });
+
     res.status(200).json({ message: 'Compra realizada com sucesso!' });
   } catch (error) {
     await pool.query('ROLLBACK');
