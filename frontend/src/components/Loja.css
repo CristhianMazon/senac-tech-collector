@@ -24,7 +24,7 @@
   z-index: 1000;
 }
 
-/* O fundo do popup agora é a cor cinza claro do dashboard */
+/* Fundo do popup é a cor cinza claro do dashboard */
 .form-popup-box {
   background-color: var(--cinza-claro);
   padding: 30px;
@@ -39,14 +39,14 @@
 
 /* Título com as mesmas cores e contorno do dashboard */
 h2 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: var(--azul-brilhante);
-  text-align: center;
-  margin-bottom: 20px;
-  -webkit-text-stroke: 4px black;
-  text-stroke: 4px black;
-  paint-order: stroke fill;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--azul-brilhante);
+    text-align: center;
+    margin-bottom: 20px;
+    -webkit-text-stroke: 4px black;
+    text-stroke: 4px black;
+    paint-order: stroke fill;
 }
 
 /* Grade de itens */
