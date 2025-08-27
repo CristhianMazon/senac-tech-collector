@@ -79,12 +79,12 @@ app.get('/api/leaderboard/top', async (req, res) => {
     const query = `
       SELECT p.pontuacao, j.nome
       FROM public.partidas p
-      JOIN public.jogadores j ON p.jogador_email = j.email
+      LEFT JOIN public.jogadores j ON p.jogador_email = j.email
       ORDER BY p.pontuacao DESC
       LIMIT 5;
     `;
     const result = await pool.query(query);
-    res.json(result.rows[0] || { pontuacao: 0, nome: 'Ninguém' });
+    res.json(result.rows);
   } catch (error) {
     console.error('Erro ao buscar recorde global:', error);
     res.status(500).json({ error: 'Erro interno do servidor.' });
