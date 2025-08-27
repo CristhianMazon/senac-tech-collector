@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './Loja.css'; // Importa os estilos da loja
-import './Dashboard.css'; // Reutiliza alguns estilos do dashboard
+import './Loja.css';
+import './Dashboard.css';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
@@ -11,7 +11,6 @@ function Loja({ player, onBack }) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Adicionada verificação para garantir que o objeto player existe
         if (!player || !player.email) {
             setLoading(false);
             return;
@@ -20,11 +19,9 @@ function Loja({ player, onBack }) {
         async function fetchData() {
             try {
                 setLoading(true);
-                // Busca os itens da loja
                 const itensResponse = await axios.get(`${API_URL}/api/loja/itens`);
                 setItensLoja(itensResponse.data);
 
-                // Busca o saldo de Techcoins do jogador
                 const dashboardResponse = await axios.get(`${API_URL}/api/dashboard/${player.email}`);
                 setTechcoins(dashboardResponse.data.techcoins || 0);
 
@@ -35,7 +32,25 @@ function Loja({ player, onBack }) {
             }
         }
         fetchData();
-    }, [player]); // player é agora a dependência do useEffect
+    }, [player]);
+
+    const handleBuy = async (itemId, itemCusto) => {
+        if (techcoins >= itemCusto) {
+            try {
+                await axios.post(`${API_URL}/api/loja/comprar`, {
+                    email: player.email,
+                    itemId: itemId,
+                });
+                alert('Compra realizada com sucesso!');
+                setTechcoins(techcoins - itemCusto);
+            } catch (error) {
+                alert(error.response?.data?.error || 'Erro ao realizar a compra.');
+                console.error("Erro ao comprar item:", error);
+            }
+        } else {
+            alert('Techcoins insuficientes!');
+        }
+    };
 
     if (loading) {
         return (
@@ -45,7 +60,6 @@ function Loja({ player, onBack }) {
         );
     }
     
-    // Adicionada verificação para o caso de player não existir
     if (!player) {
         return (
           <header className="dashboard-header">
@@ -53,7 +67,7 @@ function Loja({ player, onBack }) {
             <button className="logout-button" onClick={onBack}>Voltar</button>
           </header>
         );
-      }
+    }
       
     return (
         <>
@@ -70,7 +84,6 @@ function Loja({ player, onBack }) {
 
             <div className="dashboard-content-wrapper">
                 <main className="loja-main">
-                    {/* Coluna da esquerda com as informações do jogador */}
                     <div className="stats-column">
                         <h3>Suas Moedas</h3>
                         <div className="stat-box">
@@ -78,7 +91,6 @@ function Loja({ player, onBack }) {
                         </div>
                     </div>
 
-                    {/* Coluna da direita com os itens da loja */}
                     <div className="itens-column">
                         <h3>Itens Disponíveis</h3>
                         <div className="loja-itens-grid">
