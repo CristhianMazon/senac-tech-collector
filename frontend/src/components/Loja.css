@@ -52,7 +52,7 @@
 }
 
 .item-card {
-  background-color: var(--cinza-claro);
+background-color: var(--cinza-claro);
   border-radius: 15px;
   padding: 20px;
   text-align: center;
