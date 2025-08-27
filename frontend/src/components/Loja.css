@@ -76,6 +76,7 @@ background-color: var(--cinza-claro);
 }
 
 .item-card h3 {
+      -webkit-text-stroke: 1px #000;
   margin: 0 0 5px 0;
   font-size: 1.2rem;
   color: var(--texto-primario);
@@ -105,6 +106,7 @@ background-color: var(--cinza-claro);
 
 .buy-button {
   background-color: var(--cor-destaque);
+  align-items: center;
   color: var(--fundo-principal);
   border: none;
   border-radius: 8px;
