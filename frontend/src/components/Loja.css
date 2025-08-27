@@ -18,10 +18,9 @@
   background-color: #4d4a4a;
   border-radius: 15px;
   padding: 30px;
-  max-width: 1100px; /* Aumentado para permitir mais espaço horizontal */
+  max-width: 1100px;
   width: 95%;
   max-height: 90vh;
-  overflow-y: auto;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   text-align: center;
   border: 3px solid #686767;
@@ -41,7 +40,7 @@
 /* Grid para os itens da loja */
 .loja-itens-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Aumentado para 250px */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Aumenta a largura mínima para 300px */
   gap: 20px;
   margin-top: 10px;
   flex-grow: 1;
@@ -62,6 +61,7 @@
   text-align: center;
   border: 2px solid #4d4a4a;
   min-height: 250px;
+  flex-grow: 1; /* Permite que o card cresça para preencher o espaço */
 }
 
 .item-emoji {
@@ -98,7 +98,7 @@
   color: #0088ff;
   font-weight: bold;
   font-size: 1.1em;
-  text-align: center; /* Centraliza o custo */
+  text-align: center;
 }
 
 /* Botões */
@@ -110,16 +110,16 @@
   transition: background-color 0.3s ease, transform 0.2s ease;
   border: none;
   font-size: 1.1em;
-  width: 100%; /* Ocupa a largura total do item-footer */
+  width: 100%;
   max-width: 200px;
-  text-align: center; /* Garante que o texto fique centralizado */
+  text-align: center;
 }
 
 .buy-button {
   background-color: #0088ff;
   color: #fff;
-  display: block; /* Garante que o botão ocupe sua própria linha para centralização */
-  margin: 0 auto; /* Centraliza o botão dentro de seu container */
+  display: block;
+  margin: 0 auto;
 }
 
 .buy-button:hover {
@@ -139,7 +139,7 @@
   max-width: 300px;
   align-self: center;
   flex-shrink: 0;
-  text-align: center; /* Centraliza o texto do botão fechar */
+  text-align: center;
 }
 
 .close-button:hover {
