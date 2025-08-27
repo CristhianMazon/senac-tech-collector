@@ -15,7 +15,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: var(--cinza-escuro);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -123,6 +123,9 @@
 }
 
 .close-button {
+  background-color: var(--vermelho-brilhante);
+  color: var(--branco);
+  border: 4px solid var(--vermelho-escuro);
   position: absolute;
   top: 15px;
   right: 15px;
