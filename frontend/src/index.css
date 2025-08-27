@@ -61,7 +61,7 @@ body, html, #root {
   margin-top: 0;
   color: var(--azul-brilhante);
   font-size: clamp(2rem, 5vw, 3rem);
-  -webkit-text-stroke: 2px black;
+  -webkit-text-stroke: 5px black;
   text-stroke: 2px black;
   paint-order: stroke fill;
   margin-bottom: 25px;
