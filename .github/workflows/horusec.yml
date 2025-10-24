@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      # Adicione outras branches, se necessário
   pull_request:
     branches:
       - main
@@ -17,44 +16,32 @@ jobs:
       uses: actions/checkout@v4
 
     # 1. Instalação Corrigida do Horusec-CLI
-    # Esta etapa garante que o binário seja baixado, tornado executável
-    # no diretório atual (onde o comando chmod +x pode encontrá-lo) e que esteja pronto para uso.
     - name: Install Horusec CLI
       run: |
         echo "Baixando o Horusec CLI e tornando-o executável..."
-        # Baixa o binário do Horusec para Linux (amd64) para o diretório atual (./horusec)
         curl -L https://github.com/ZupIT/horusec/releases/latest/download/horusec_linux_amd64 -o horusec
-        
-        # Torna o binário executável no diretório atual
         chmod +x horusec
-        
-        # Verifica a versão para confirmar a instalação
         ./horusec version
 
-    # 2. Execução com os parâmetros solicitados para visualização no log
-    # Esta etapa usa o -o text e --disable-docker=true.
+    # 2. Execução para o Log (TEXTO) - Confirma a análise e o parâmetro solicitado
     - name: Run Horusec Scan and Output to Text (Solicitado)
       run: |
         echo "Executando Horusec com --disable-docker=true -o text para log..."
+        # Esta execução é rápida, apenas para mostrar o output no log.
         ./horusec start -p . --disable-docker="true" -o text
 
-    # 3. Execução para geração dos Relatórios em JSON e HTML
-    # É necessário rodar o start novamente para gerar os formatos de relatório.
-    - name: Generate JSON (Technical) and HTML (Executive) Reports
+    # 3. Execução para geração do Relatório Técnico (JSON)
+    # O JSON é o formato mais detalhado e serve como base para ambos os relatórios.
+    - name: Generate JSON (Technical) Report
       run: |
-        # Relatório Técnico (JSON) - Mais detalhado, ideal para analistas.
         echo "Gerando horusec_relatorio_tecnico.json..."
         ./horusec start -p . --disable-docker="true" --output-format json --json-output-file horusec_relatorio_tecnico.json
         
-        # Relatório Executivo (HTML) - Mais legível para resumo.
-        echo "Gerando horusec_relatorio_executivo.html..."
-        ./horusec start -p . --disable-docker="true" --output-format html --html-output-file horusec_relatorio_executivo.html
-
     # 4. Upload dos Artefatos
+    # Iremos entregar apenas o JSON (Relatório Técnico) como artefato,
+    # pois ele contém todos os dados que você precisa para preencher os PDFs.
     - name: Upload Report Artifacts
       uses: actions/upload-artifact@v4
       with:
         name: horusec-reports-${{ github.sha }}
-        path: |
-          horusec_relatorio_tecnico.json
-          horusec_relatorio_executivo.html
+        path: horusec_relatorio_tecnico.json
