@@ -1,0 +1,51 @@
+name: Horusec SAST Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security_scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 1. Instalação Manual do Horusec-CLI
+    # Usar a instalação manual é a maneira mais direta de controlar o CLI
+    - name: Install Horusec CLI
+      run: |
+        # Baixa e torna o binário Horusec executável (Instalação local/manual)
+        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+        chmod +x horusec
+
+    # 2. Execução com os parâmetros solicitados para visualização no log
+    - name: Run Horusec Scan and Output to Text (Solicitado pelo usuário)
+      run: |
+        # Executa a análise, desabilita o Docker e mostra o resultado no log (formato de texto)
+        echo "Executando Horusec com --disable-docker=true -o text..."
+        ./horusec start -p . --disable-docker="true" -o text
+
+    # 3. Execução para geração de Relatórios (JSON para Técnico e HTML para Executivo)
+    - name: Generate JSON (Technical) and HTML (Executive) Reports
+      run: |
+        # Relatório Técnico (JSON) - Mais detalhado, ideal para analistas
+        echo "Gerando horusec_relatorio_tecnico.json..."
+        ./horusec start -p . --disable-docker="true" --output-format json --json-output-file horusec_relatorio_tecnico.json
+        
+        # Relatório Executivo (HTML) - Mais legível, ideal para gestores
+        echo "Gerando horusec_relatorio_executivo.html..."
+        ./horusec start -p . --disable-docker="true" --output-format html --html-output-file horusec_relatorio_executivo.html
+
+    # 4. Upload dos Artefatos
+    - name: Upload Report Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: horusec-reports-${{ github.sha }}
+        path: |
+          horusec_relatorio_tecnico.json
+          horusec_relatorio_executivo.html
