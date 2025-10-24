@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      # Adicione outras branches, se necessário
   pull_request:
     branches:
       - main
@@ -15,29 +16,37 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 1. Instalação Manual do Horusec-CLI
-    # Usar a instalação manual é a maneira mais direta de controlar o CLI
+    # 1. Instalação Corrigida do Horusec-CLI
+    # Esta etapa garante que o binário seja baixado, tornado executável
+    # no diretório atual (onde o comando chmod +x pode encontrá-lo) e que esteja pronto para uso.
     - name: Install Horusec CLI
       run: |
-        # Baixa e torna o binário Horusec executável (Instalação local/manual)
-        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/master/deployments/scripts/install.sh | bash -s latest
+        echo "Baixando o Horusec CLI e tornando-o executável..."
+        # Baixa o binário do Horusec para Linux (amd64) para o diretório atual (./horusec)
+        curl -L https://github.com/ZupIT/horusec/releases/latest/download/horusec_linux_amd64 -o horusec
+        
+        # Torna o binário executável no diretório atual
         chmod +x horusec
+        
+        # Verifica a versão para confirmar a instalação
+        ./horusec version
 
     # 2. Execução com os parâmetros solicitados para visualização no log
-    - name: Run Horusec Scan and Output to Text (Solicitado pelo usuário)
+    # Esta etapa usa o -o text e --disable-docker=true.
+    - name: Run Horusec Scan and Output to Text (Solicitado)
       run: |
-        # Executa a análise, desabilita o Docker e mostra o resultado no log (formato de texto)
-        echo "Executando Horusec com --disable-docker=true -o text..."
+        echo "Executando Horusec com --disable-docker=true -o text para log..."
         ./horusec start -p . --disable-docker="true" -o text
 
-    # 3. Execução para geração de Relatórios (JSON para Técnico e HTML para Executivo)
+    # 3. Execução para geração dos Relatórios em JSON e HTML
+    # É necessário rodar o start novamente para gerar os formatos de relatório.
     - name: Generate JSON (Technical) and HTML (Executive) Reports
       run: |
-        # Relatório Técnico (JSON) - Mais detalhado, ideal para analistas
+        # Relatório Técnico (JSON) - Mais detalhado, ideal para analistas.
         echo "Gerando horusec_relatorio_tecnico.json..."
         ./horusec start -p . --disable-docker="true" --output-format json --json-output-file horusec_relatorio_tecnico.json
         
-        # Relatório Executivo (HTML) - Mais legível, ideal para gestores
+        # Relatório Executivo (HTML) - Mais legível para resumo.
         echo "Gerando horusec_relatorio_executivo.html..."
         ./horusec start -p . --disable-docker="true" --output-format html --html-output-file horusec_relatorio_executivo.html
 
